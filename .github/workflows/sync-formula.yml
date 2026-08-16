@@ -1,0 +1,19 @@
+name: Sync formula
+
+on:
+  schedule:
+    # Daily 03:23 UTC: pick up new wright releases within a day.
+    - cron: "23 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out tap
+        uses: actions/checkout@v4
+      - name: Sync formula from latest wright release
+        run: bash scripts/sync-formula.sh
