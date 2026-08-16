@@ -3,23 +3,27 @@
 class Wright < Formula
   desc "Tooling-first semantic platform for the Overwatch Workshop and OverPy ecosystem"
   homepage "https://github.com/wrightkit/wright"
+  url "https://github.com/wrightkit/wright/releases/download/v0.1.0/wright-0.1.0-aarch64-apple-darwin.tar.gz"
+  sha256 "1b11ad3846bc5d8349a938ab7c88d04581e9873b0bdc1feb3c6bbbffa2d536ee"
   license "AGPL-3.0-or-later"
-  version "0.1.0"
 
-  on_arm do
-    url "https://github.com/wrightkit/wright/releases/download/v0.1.0/wright-0.1.0-aarch64-apple-darwin.tar.gz"
-    sha256 "1b11ad3846bc5d8349a938ab7c88d04581e9873b0bdc1feb3c6bbbffa2d536ee"
-  end
-
-  on_intel do
-    url "https://github.com/wrightkit/wright/releases/download/v0.1.0/wright-0.1.0-x86_64-apple-darwin.tar.gz"
-    sha256 "a315016822ded0f23aa4f0b4905db7459e01e1f40b8b6c364a020d770d7d733f"
+  resource "wright-intel" do
+    on_intel do
+      url "https://github.com/wrightkit/wright/releases/download/v0.1.0/wright-0.1.0-x86_64-apple-darwin.tar.gz"
+      sha256 "a315016822ded0f23aa4f0b4905db7459e01e1f40b8b6c364a020d770d7d733f"
+    end
   end
 
   def install
-    dir = "wright-#{version}-#{Hardware::CPU.arm? ? "aarch64-apple-darwin" : "x86_64-apple-darwin"}"
-    bin.install "#{dir}/wright"
-    bin.install "#{dir}/wright-lsp"
+    if Hardware::CPU.intel?
+      resource("wright-intel").stage do
+        bin.install "wright"
+        bin.install "wright-lsp"
+      end
+    else
+      bin.install "wright"
+      bin.install "wright-lsp"
+    end
   end
 
   test do

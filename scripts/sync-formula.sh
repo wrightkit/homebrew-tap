@@ -22,7 +22,7 @@ if ! formula="$(curl -fsSL "$formula_url" 2>/dev/null)"; then
   # pipeline attached manifests, e.g. v0.1.0). If the committed formula
   # already covers the latest version we are current; otherwise surface the
   # gap instead of silently staying stale.
-  if [[ -f "$FORMULA" ]] && grep -q "^  version \"${version}\"$" "$FORMULA"; then
+  if [[ -f "$FORMULA" ]] && grep -q "releases/download/v${version}/" "$FORMULA"; then
     echo "no manifest attached to ${tag}, but wright.rb already covers ${version}; nothing to do"
     exit 0
   fi
@@ -35,8 +35,8 @@ printf '%s' "$formula" | grep -q '^class Wright < Formula$' || {
   echo "error: downloaded manifest is not a Wright formula; aborting" >&2
   exit 1
 }
-printf '%s' "$formula" | grep -q "^  version \"${version}\"$" || {
-  echo "error: downloaded formula version does not match release ${tag}; aborting" >&2
+printf '%s' "$formula" | grep -q "releases/download/v${version}/" || {
+  echo "error: downloaded formula does not reference release ${tag}; aborting" >&2
   exit 1
 }
 
